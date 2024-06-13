@@ -1,43 +1,41 @@
-#include "vec3.h"
-#include "ray.h"
-#include "color.h"
+#include "rtweekend.h"
 
-#include <iostream>
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
-double hit_sphere(const point3& center, double radius, const ray& r){
-	vec3 oc = center - r.origin();
-	auto a = dot(r.direction(), r.direction());
-	auto b = -2.0 * dot(r.direction(), oc);
-	auto c = dot(oc, oc) - radius * radius;
-	auto discrimant = b * b - 4 * a * c;
-
-	if(discrimant < 0){
-		return -1.0;
-	} else{
-		return (-b - sqrt(discrimant) ) / (2.0 * a);
+color ray_color(const ray& r, const hittable& world) {
+	hit_record rec;
+	// Sets color of sphere if it got hit
+	if (world.hit(r, interval(0, infinity), rec)){
+		return 0.5 * (rec.normal + rgb_to_byte(color(255,255,255)));
 	}
-}
 
-color ray_color(const ray& r) {
-	auto t = hit_sphere(point3(0,0,-1), 0.5, r);
-	if(t > 0.0) {
-		vec3 N = unit_vector(r.at(t) - vec3(0,0,-1));
-		return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
-	}
 	vec3 unit_direction = unit_vector(r.direction());
 	auto a = 0.5 * (unit_direction.y() + 1.0);
-	return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
+	return (1.0 - a) * rgb_to_byte(color(0,0,0)) + a * rgb_to_byte(color(178,130,180));
 }
-
 
 int main() {
 	// Image
 	
 	auto aspect_ratio = 16.0 / 9.0;
 	int image_width = 400;	
-
+	
+	// Calculate height based on width and desired aspect ratio
 	int image_height = int(image_width / aspect_ratio);
 	image_height = (image_height < 1) ? 1 : image_height;
+
+	// World
+
+	hittable_list world;
+
+
+	// Sphere:
+	world.add(make_shared<sphere>(point3(0,0,-1), 0.7));
+	
+	//	Ground:
+	world.add(make_shared<sphere>(point3(0,-100.5,-1), 100));
 
 	//Camera
 	
@@ -46,7 +44,14 @@ int main() {
 	auto viewport_width = viewport_height * (double(image_width)/image_height);
 	auto camera_center = point3(0,0,0);
 
-	// Calculate the vectors accross the horizontal and down the vertical viewport edgeds
+	/*	_____________
+		|Vu ->		|
+	Vv  |			|
+	  |	|			|
+	  v	|___________|
+	 */
+
+	// Calculate the vectors accross the horizontal and down the vertical viewport edges
 	auto viewport_u = vec3(viewport_width, 0, 0);
 	auto viewport_v = vec3(0, -viewport_height, 0);
 
@@ -56,7 +61,7 @@ int main() {
 
 	// Calculate the location of the upper left pixel
 	auto viewport_upper_left = camera_center - vec3(0,0, focal_length) - viewport_u / 2 - viewport_v / 2;
-	auto pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+	auto pixel_00_location = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
 	// Render
 	
@@ -65,11 +70,11 @@ int main() {
 	for (int j = 0; j < image_height; j++){
 		std::clog << "\rScanlines remaing " << (image_height -j) << ' ' << std::flush << "\n";
 		for(int i = 0; i < image_width; i++){
-			auto pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
+			auto pixel_center = pixel_00_location + (i * pixel_delta_u) + (j * pixel_delta_v);
 			auto ray_direction = pixel_center - camera_center;
 			ray r (camera_center, ray_direction);
 
-			color pixel_color = ray_color(r);
+			color pixel_color = ray_color(r, world);
 			write_color(std::cout, pixel_color);
 		}	
 	}

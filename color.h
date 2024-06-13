@@ -3,8 +3,6 @@
 
 #include "vec3.h"
 
-#include <iostream>
-
 using color = vec3;
 
 void write_color(std::ostream& out, const color& pixel_color){
@@ -20,4 +18,19 @@ void write_color(std::ostream& out, const color& pixel_color){
 	// Write out the pixel color components
 	out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }
+
+double roundToDecimal(double value, int decimalPlaces) {
+    double scale = std::pow(10.0, decimalPlaces);
+    return std::round(value * scale) / scale;
+}
+
+color rgb_to_byte(const color& rgb){
+	color byte_color(0,0,0);
+	byte_color.e[0] = roundToDecimal((rgb.e[0] / 255.999), 1);
+	byte_color.e[1] = roundToDecimal((rgb.e[1] / 255.999), 1);
+	byte_color.e[2] = roundToDecimal((rgb.e[2] / 255.999), 1);
+	return byte_color;
+}
+
+
 #endif
