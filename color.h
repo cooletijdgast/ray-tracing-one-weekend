@@ -3,7 +3,7 @@
 
 #include "vec3.h"
 
-using color = vec3;
+using color = vector3Points;
 
 void write_color(std::ostream& out, const color& pixel_color){
 	auto r = pixel_color.x();
@@ -26,9 +26,9 @@ double roundToDecimal(double value, int decimalPlaces) {
 
 color rgb_to_byte(const color& rgb){
 	color byte_color(0,0,0);
-	byte_color.e[0] = roundToDecimal((rgb.e[0] / 255.999), 1);
-	byte_color.e[1] = roundToDecimal((rgb.e[1] / 255.999), 1);
-	byte_color.e[2] = roundToDecimal((rgb.e[2] / 255.999), 1);
+	byte_color.component[0] = roundToDecimal((rgb.component[0] / 255.999), 1);
+	byte_color.component[1] = roundToDecimal((rgb.component[1] / 255.999), 1);
+	byte_color.component[2] = roundToDecimal((rgb.component[2] / 255.999), 1);
 	return byte_color;
 }
 

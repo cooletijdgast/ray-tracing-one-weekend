@@ -6,99 +6,105 @@
 
 using std::sqrt;
 
-class vec3 {
-  public:
-    double e[3];
+class vector3Points {
+   public:
+    double component[3];
 
-    vec3() : e{0,0,0} {}
-    vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
+    vector3Points() : component{0, 0, 0} {}
+    vector3Points(double comp0, double comp1, double comp2) : component{comp0, comp1, comp2} {}
 
-    double x() const { return e[0]; }
-    double y() const { return e[1]; }
-    double z() const { return e[2]; }
+    double x() const { return component[0]; }
+    double y() const { return component[1]; }
+    double z() const { return component[2]; }
 
-    vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
-    double operator[](int i) const { return e[i]; }
-    double& operator[](int i) { return e[i]; }
+    vector3Points operator-() const {
+        return vector3Points(-component[0], -component[1], -component[2]);
+    }
+    double  operator[](int i) const { return component[i]; }
+    double& operator[](int i) { return component[i]; }
 
-    vec3& operator+=(const vec3& v) {
-        e[0] += v.e[0];
-        e[1] += v.e[1];
-        e[2] += v.e[2];
+    vector3Points& operator+=(const vector3Points& vector) {
+        component[0] += vector.component[0];
+        component[1] += vector.component[1];
+        component[2] += vector.component[2];
         return *this;
     }
 
-    vec3& operator*=(double t) {
-        e[0] *= t;
-        e[1] *= t;
-        e[2] *= t;
+    vector3Points& operator*=(double multiplier) {
+        component[0] *= multiplier;
+        component[1] *= multiplier;
+        component[2] *= multiplier;
         return *this;
     }
 
-    vec3& operator/=(double t) {
-        return *this *= 1/t;
-    }
+    vector3Points& operator/=(double divider) { return *this *= 1 / divider; }
 
-    double length() const {
-        return sqrt(length_squared());
-    }
+    double length() const { return sqrt(length_squared()); }
 
     double length_squared() const {
-        return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+        return component[0] * component[0] + component[1] * component[1] +
+               component[2] * component[2];
     }
 };
 
 // point3 is just an alias for vec3, but useful for geometric clarity in the code.
-using point3 = vec3;
-
+using point3 = vector3Points;
 
 // Vector Utility Functions
 
-inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
-    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+inline std::ostream& operator<<(std::ostream& out, const vector3Points& vertical) {
+    return out << vertical.component[0] << ' ' << vertical.component[1] << ' '
+               << vertical.component[2];
 }
 
-inline vec3 operator+(const vec3& u, const vec3& v) {
-    return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+inline vector3Points operator+(const vector3Points& horizontal, const vector3Points& vertical) {
+    return vector3Points(horizontal.component[0] + vertical.component[0],
+                         horizontal.component[1] + vertical.component[1],
+                         horizontal.component[2] + vertical.component[2]);
 }
 
-inline vec3 operator-(const vec3& u, const vec3& v) {
-    return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+inline vector3Points operator-(const vector3Points& horizontal, const vector3Points& vertical) {
+    return vector3Points(horizontal.component[0] - vertical.component[0],
+                         horizontal.component[1] - vertical.component[1],
+                         horizontal.component[2] - vertical.component[2]);
 }
 
-inline vec3 operator*(const vec3& u, const vec3& v) {
-    return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+inline vector3Points operator*(const vector3Points& horizontal, const vector3Points& vertical) {
+    return vector3Points(horizontal.component[0] * vertical.component[0],
+                         horizontal.component[1] * vertical.component[1],
+                         horizontal.component[2] * vertical.component[2]);
 }
 
-inline vec3 operator*(double t, const vec3& v) {
-    return vec3(t*v.e[0], t*v.e[1], t*v.e[2]);
+inline vector3Points operator*(double multiplier, const vector3Points& vertical) {
+    return vector3Points(multiplier * vertical.component[0], multiplier * vertical.component[1],
+                         multiplier * vertical.component[2]);
 }
 
-inline vec3 operator*(const vec3& v, double t) {
-    return t * v;
+inline vector3Points operator*(const vector3Points& vertical, double multiplier) {
+    return multiplier * vertical;
 }
 
-inline vec3 operator/(const vec3& v, double t) {
-    return (1/t) * v;
+inline vector3Points operator/(const vector3Points& vertical, double divider) {
+    return (1 / divider) * vertical;
 }
 
-inline double dot(const vec3& u, const vec3& v) {
-    return u.e[0] * v.e[0]
-         + u.e[1] * v.e[1]
-         + u.e[2] * v.e[2];
+inline double dot(const vector3Points& horizontal, const vector3Points& vertical) {
+    return horizontal.component[0] * vertical.component[0] +
+           horizontal.component[1] * vertical.component[1] +
+           horizontal.component[2] * vertical.component[2];
 }
 
-inline vec3 cross(const vec3& u, const vec3& v) {
-    return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-                u.e[2] * v.e[0] - u.e[0] * v.e[2],
-                u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+inline vector3Points cross(const vector3Points& horizontal, const vector3Points& vertical) {
+    return vector3Points(horizontal.component[1] * vertical.component[2] -
+                             horizontal.component[2] * vertical.component[1],
+                         horizontal.component[2] * vertical.component[0] -
+                             horizontal.component[0] * vertical.component[2],
+                         horizontal.component[0] * vertical.component[1] -
+                             horizontal.component[1] * vertical.component[0]);
 }
 
-inline vec3 unit_vector(const vec3& v) {
-    return v / v.length();
+inline vector3Points unit_vector(const vector3Points& vertical) {
+    return vertical / vertical.length();
 }
 
 #endif
-
-
-
