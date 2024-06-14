@@ -3,21 +3,28 @@
 
 #include "vec3.h"
 
-class ray{
-	public:
-		ray(){}
+class Ray {
+  public:
+  Ray() {
+  }
 
-		ray(const point3& origin, const vector3Points& direction) : orig(origin), dir(direction) {}
+  Ray(const Point3D& origin, const Vector3D& direction)
+  : orig(origin), dir(direction) {
+  }
 
-		const point3& origin() const { return orig; }
-		const vector3Points& direction() const { return dir; }
+  const Point3D& origin() const {
+    return orig;
+  }
+  const Vector3D& direction() const {
+    return dir;
+  }
 
-		point3 at(double t) const {
-			return orig + t * dir;
-		}
+  Point3D at(double t) const {
+    return orig + t * dir;
+  }
 
-	private:
-	       point3 orig;
-       	       vector3Points dir;
-	};
+  private:
+  Point3D orig;
+  Vector3D dir;
+};
 #endif
